@@ -35,8 +35,8 @@ async function run() {
             const result = await booksCategoryCollections.find().toArray();
             res.send(result)
 
-        }catch{
-            res.send(Error)
+        }catch (error) {
+          res.status(500).send('An error occurred: ' + error.message);
         }
     });
 
@@ -50,27 +50,37 @@ async function run() {
         
 
       }
-      catch{
-        res.send(Error)
+      catch (error) {
+        res.status(500).send('An error occurred: ' + error.message);
       }
     }); 
 
     // get books api 
     //find category data ==> api/v1/all-book?category_name=History 
+    // find data by quantity ==> api/v1/all-book?sortField=quantity&sortOrder=desc
     app.get('/api/v1/all-book', async(req,res)=>{
       try{
-        let queryObj = {}
-        const category = req.query.category_name;
-        if(category){
-          queryObj.category_name =category
+        let queryObj = {};
+        let sortObj = {};
+    
+        const category = decodeURIComponent(req.query.category_name);
+        const sortField = req.query.sortField;
+        const sortOrder = req.query.sortOrder;
+    
+        if (category) {
+          queryObj.category_name = category;
         }
-        const cursor = booksCollection.find(queryObj)
-      const result = await cursor.toArray()
-      res.send(result)
-
-      }catch{
-        res.send(Error)
-
+    
+        if (sortField && sortOrder) {
+          sortObj[sortField] = sortOrder;
+        }
+    
+        const cursor = booksCollection.find(queryObj).sort(sortObj);
+        const result = await cursor.toArray();
+    
+        res.send(result);
+      }catch (error) {
+        res.status(500).send('An error occurred: ' + error.message);
       }
     })
     
