@@ -27,8 +27,10 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
      client.connect();
     const booksCategoryCollections = client.db('bookshelfMasterDB').collection('categories');
+    const booksCollection = client.db('bookshelfMasterDB').collection('books');
 
-    app.get('/api/vi/categories', async(req,res)=>{
+    //get home page card data from this api
+    app.get('/api/v1/categories', async(req,res)=>{
         try{
             const result = await booksCategoryCollections.find().toArray();
             res.send(result)
@@ -36,6 +38,21 @@ async function run() {
         }catch{
             res.send(Error)
         }
+    });
+
+    // post a book api
+
+    app.post('/api/v1/add-book', async(req,res)=>{
+      try{
+        const data = req.body;
+        const result = await booksCollection.insertOne(data);
+        res.send(result);
+        
+
+      }
+      catch{
+        res.send(Error)
+      }
     })
 
 
