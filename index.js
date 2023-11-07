@@ -53,7 +53,22 @@ async function run() {
       catch{
         res.send(Error)
       }
+    }); 
+
+    // get books api 
+
+    app.get('/api/v1/all-book', async(req,res)=>{
+      try{
+        const cursor = booksCollection.find()
+      const result = await cursor.toArray()
+      res.send(result)
+
+      }catch{
+        res.send(Error)
+
+      }
     })
+    
 
 
     await client.db("admin").command({ ping: 1 });
