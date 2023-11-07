@@ -56,10 +56,15 @@ async function run() {
     }); 
 
     // get books api 
-
+    //find category data ==> api/v1/all-book?category_name=History 
     app.get('/api/v1/all-book', async(req,res)=>{
       try{
-        const cursor = booksCollection.find()
+        let queryObj = {}
+        const category = req.query.category_name;
+        if(category){
+          queryObj.category_name =category
+        }
+        const cursor = booksCollection.find(queryObj)
       const result = await cursor.toArray()
       res.send(result)
 
