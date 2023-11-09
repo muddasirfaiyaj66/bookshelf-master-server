@@ -12,7 +12,8 @@ const port = process.env.PORT || 5000;
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors({
-    origin:'https://bookshelf-master.web.app/',
+    origin:['http://localhost:5173','https://bookshelf-master.web.app', 'https://bookshelf-master.firebaseapp.com'],
+    
     
     credentials: true
 }))
@@ -212,23 +213,9 @@ app.put('/api/v1/all-book/:id', async (req, res) => {
 
 });
 
-
-
-
 app.post('/api/v1/borrowed-book', async (req, res) => {
   try {
     const data = req.body;
-    const userEmail = data.email; 
-    const bookId = data.bookId; 
-
-
-    const existingRecord = await borrowedBookCollection.findOne({ bookId, email: userEmail });
-
-    if (existingRecord) {
-    
-      return res.status(400).json({ error: 'User has already borrowed this book.' });
-    }
-
 
     const result = await borrowedBookCollection.insertOne(data);
     res.send(result);
@@ -237,6 +224,9 @@ app.post('/api/v1/borrowed-book', async (req, res) => {
     res.status(500).json({ error: 'An error occurred while adding the borrowed book.' });
   }
 });
+
+
+
 
 app.get('/api/v1/borrowed-book',verifyToken, async(req,res)=>{
   try {
